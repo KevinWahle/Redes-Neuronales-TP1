@@ -9,7 +9,7 @@ Original file is located at
 
 import matplotlib.pyplot as plt
 from matplotlib.ticker import StrMethodFormatter
-
+import numpy as np
 
 class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
                'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
@@ -57,3 +57,28 @@ def acc_epoch_graph (hyper, hyper_name, accuracy_values, stop_epochs, log=False,
 
     plt.tight_layout()
     plt.show()
+
+def plot_value_array(i, predictions_array):
+    true_label=i
+    predictions_array = predictions_array[i]
+    predicted_label = np.argmax(predictions_array)
+
+    thisplot = plt.bar(range(10), predictions_array, color='grey')
+    thisplot[predicted_label].set_color('red')
+    thisplot[true_label].set_color('blue')
+    for j in range(len(predictions_array)):
+        if predictions_array[j]>0.01:
+            plt.text(j-0.4,predictions_array[j]+0.01,f"{predictions_array[j]:.2f}", rotation=45)
+    plt.ylim([0, 1.15])
+    plt.xticks(range(10), class_names, rotation=45)
+    plt.title(class_names[true_label])
+    
+def class_average(predictions_array, true_label):
+    class_averages = np.zeros((10, 10))
+    for i in range(len(true_label)):
+        class_averages[true_label[i]] += predictions_array[i]
+        
+    for i in range(10):
+        class_averages[i] /= np.sum(true_label == i)
+
+    return class_averages
